@@ -6,4 +6,8 @@
   "repository": "https://github.com/glacierheavner/Crystal-Florist.git",
   "author": "Sylas <38060892+glacierheavner@users.noreply.github.com>",
   "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "discord.js": "^13.3.1"
+  }
 }
