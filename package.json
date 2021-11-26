@@ -1,23 +1,10 @@
 {
   "name": "crystal-florist",
-  "version": "1.0.0",
   "description": "Moderation and management bot, built for The Prismatic Garden",
+  "version": "1.0.0",
   "main": "bot/index.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/glacierheavner/Crystal-Florist"
-  },
-  "keywords": [
-    "discord",
-    "bot",
-    "crystal",
-    "florist",
-    "prismatic",
-    "garden",
-    "discord.js",
-    "moderation",
-    "management"
-  ],
-  "author": "Sophie",
-  "license": "ISC"
+  "repository": "https://github.com/glacierheavner/Crystal-Florist.git",
+  "author": "Sylas <38060892+glacierheavner@users.noreply.github.com>",
+  "license": "MIT",
+  "private": false
 }
