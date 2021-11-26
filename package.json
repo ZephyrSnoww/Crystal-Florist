@@ -1,0 +1,23 @@
+{
+  "name": "crystal-florist",
+  "version": "1.0.0",
+  "description": "Moderation and management bot, built for The Prismatic Garden",
+  "main": "bot/index.js",
+  "repository": {
+    "type": "git",
+    "url": "Crystal-Florist"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "crystal",
+    "florist",
+    "prismatic",
+    "garden",
+    "discord.js",
+    "moderation",
+    "management"
+  ],
+  "author": "Sophie",
+  "license": "ISC"
+}
