@@ -5,7 +5,7 @@
   "main": "bot/index.js",
   "repository": {
     "type": "git",
-    "url": "Crystal-Florist"
+    "url": "https://github.com/glacierheavner/Crystal-Florist"
   },
   "keywords": [
     "discord",
