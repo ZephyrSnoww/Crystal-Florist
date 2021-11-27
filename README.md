@@ -9,4 +9,4 @@ A moderation and management bot built for The Prismatic Garden Discord server.
 	- TOKEN: The token you wish to use for the bot.
 	- GUILD_ID: The gulid you wish to run the bot on.
 3. Install dependencies (`yarn`)
-4. Run the bot! (`node bot/index.js`)
+4. Run the bot! (`node index.js`)
