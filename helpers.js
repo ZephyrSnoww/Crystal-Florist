@@ -19,7 +19,8 @@ module.exports = {
         thumbnail = null,
         fields = [],
         image = null,
-        footer = null
+        footer = null,
+        timestamp = true
     }) {
         // If no color is given
         // Choose randomly from the default colors list
@@ -34,8 +35,11 @@ module.exports = {
             .setColor(color)
             .setURL(url)
             .setThumbnail(thumbnail)
-            .setImage(image)
-            .setTimestamp()
+            .setImage(image);
+
+        if (timestamp) {
+            embed.setTimestamp();
+        }
         
         // Set author if one is given
         if (author) {
