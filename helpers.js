@@ -1,7 +1,7 @@
 const { MessageEmbed, User } = require("discord.js")
 
 module.exports = {
-    defaultColors = [
+    defaultColors: [
         "FF9EAA", // Pink
         "FF5E6C", // Red
         "A667E0", // Purple

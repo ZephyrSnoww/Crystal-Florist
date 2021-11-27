@@ -19,6 +19,7 @@ const client = new Client({
 });
 
 // Make a new commands collection
+const commands = [];
 client.commands = new Collection();
 
 // Iterate through command filenames
@@ -26,6 +27,7 @@ client.commands = new Collection();
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 	client.commands.set(command.data.name, command);
+    commands.push(command.data.toJSON());
 }
 
 // When the client is first ready
