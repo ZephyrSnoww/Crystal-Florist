@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { createEmbed } = require("../helpers");
+const helpers = require("../helpers");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -19,12 +19,14 @@ module.exports = {
 
         interaction.reply({
             embeds: [
-                createEmbed({
+                helpers.createEmbed({
                     title: "Pong!",
                     description: responses[Math.floor(Math.random() * responses.length)],
-                    author: interaction.author
+                    author: interaction.user
                 })
             ]
         });
+
+        console.log(`${interaction.user.username} pinged the bot!`);
     }
 }

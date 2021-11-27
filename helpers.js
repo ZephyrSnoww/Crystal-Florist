@@ -1,4 +1,4 @@
-const { MessageEmbed, User } = require("discord.js")
+const { MessageEmbed } = require("discord.js")
 
 module.exports = {
     defaultColors: [
@@ -39,11 +39,11 @@ module.exports = {
         
         // Set author if one is given
         if (author) {
-            if (typeof(author) === User) {
+            if (typeof(author) === "object") {
                 embed.setAuthor(author.username, author.avatarURL());
             }
             else {
-                embed.setAuthor(author.name, author.pfp);
+                embed.setAuthor(author[0], author[1]);
             }
         }
 
