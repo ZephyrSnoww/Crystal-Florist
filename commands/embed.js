@@ -137,11 +137,10 @@ module.exports = {
                 // Edit embeds to say so
                 messageEmbed.setDescription("Send the channel you would like to send this embed in!\n\n*Say \"cancel\" to go back*");
                 replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
-
-                // Get input
-                return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage, "channel");
             }
             
+            // Get input
+            return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage, message.content.toLowerCase());
         }).catch((error) => {
             console.error(error);
             return interaction.followUp("A minute has passed with no response!\nI'm no longer listening...");
