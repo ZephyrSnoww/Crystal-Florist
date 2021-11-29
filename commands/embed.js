@@ -36,6 +36,8 @@ module.exports = {
             description: "What would you like to change?\n\n*Say \"cancel\" to cancel creation*",
             author: interaction.user
         });
+
+        messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
         
         await interaction.reply({ embeds: [outputEmbed, messageEmbed] });
         const replyMessage = await interaction.fetchReply();
