@@ -56,6 +56,7 @@ module.exports = {
         }).then(async (messages) => {
             // Get the collected message
             let message = messages.first();
+            let outputString = "";
             message.delete();
             messageEmbed.fields = [];
 
@@ -133,11 +134,33 @@ module.exports = {
                 return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage);
             }
 
-            if (message.content.toLowerCase() === "channel") {
-                // Edit embeds to say so
-                messageEmbed.setDescription("Send the channel you would like to send this embed in!\n\n*Say \"cancel\" to go back*");
-                replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+            switch (message.content.toLowerCase()) {
+                case "channel": outputString = "Send the channel you would like to send this embed in!"; break;
+                case "title": outputString = "Send the title you want the embed to have!"; break;
+                case "description": outputString = "Send the description you want the embed to have!"; break;
+                case "color": outputString = "Send the color you would like the embed to have, formatted as a hex code!"; break;
+                case "user": outputString = "Ping the user you would like the embed to have as its author!"; break;
+                case "footer text": outputString = "Send the text you would like the footer to have!"; break;
+                case "footer image": outputString = "Send a link to the image you would like the footer to have!"; break;
+                case "timestamp":
+                    let timestampEnabled;
+                    if (messageEmbed.timestamp !== null) {
+                        outputEmbed.setTimestamp(null);
+                        timestampEnabled = false;
+                    }
+                    else {
+                        messageEmbed.setTimestamp();
+                        timestampEnabled = true;
+                    }
+
+                    messageEmbed.setDescription(`Timestamp toggled ${timestampEnabled ? "on" : "off"}!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*`);
+                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+                    return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage);
+                default: outputString = "what"; break;
             }
+            
+            messageEmbed.setDescription(`${outputString}\n\n*Say \"cancel\" to go back*`);
+            replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
             
             // Get input
             return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage, message.content.toLowerCase());
