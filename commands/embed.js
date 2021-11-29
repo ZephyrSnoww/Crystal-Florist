@@ -4,24 +4,22 @@ const helpers = require("../helpers");
 
 module.exports = {
     channel: null,
+    validOptions: {
+        "channel": "channel",
+        "title": "string",
+        "description": "string",
+        "color": "int",
+        "user": "user",
+        "footer text": "string",
+        "footer image": "url",
+        "timestamp": "boolean"
+    },
 
     data: new SlashCommandBuilder()
         .setName("embed")
         .setDescription("Create an embed using messages!"),
 
     async execute(interaction) {
-        // Define what valid options are
-        let validOptions = {
-            "channel": "channel",
-            "title": "string",
-            "description": "string",
-            "color": "int",
-            "user": "user",
-            "footer text": "string",
-            "footer image": "url",
-            "timestamp": "boolean"
-        }
-
         this.channel = null;
 
         // Create the preview embed
@@ -45,7 +43,7 @@ module.exports = {
         await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage);
     },
 
-    async getInput(waitTime, interaction, validOptions, outputEmbed, messageEmbed, replyMessage, specific=null) {
+    async getInput(waitTime, interaction, outputEmbed, messageEmbed, replyMessage, specific=null) {
         // Define a filter for message collection
         const filter = (message) => message.author.id == interaction.user.id;
 
@@ -80,7 +78,7 @@ module.exports = {
                 replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
 
                 // Get input
-                return await this.getInput(60, interaction, validOptions, outputEmbed, messageEmbed, replyMessage);
+                return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage);
             }
 
             // If they cancel after being asked for something specific
@@ -90,7 +88,7 @@ module.exports = {
                 replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
 
                 // Get input
-                return await this.getInput(60, interaction, validOptions, outputEmbed, messageEmbed, replyMessage);
+                return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage);
             }
 
             // If they cancel without being asked something specific
@@ -110,7 +108,7 @@ module.exports = {
                     replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
 
                     // Get input
-                    return await this.getInput(60, interaction, validOptions, outputEmbed, messageEmbed, replyMessage, "channel");
+                    return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage, "channel");
                 }
 
                 interaction.guild.channels.fetch(message.content.substring(2, message.content.length - 1)).then((channel) => {
@@ -121,18 +119,18 @@ module.exports = {
                 replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
 
                 // Get input
-                return await this.getInput(60, interaction, validOptions, outputEmbed, messageEmbed, replyMessage);
+                return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage);
             }
 
             // If the message content isnt a valid option
-            if (!Object.keys(validOptions).includes(message.content.toLowerCase())) {
+            if (!Object.keys(this.validOptions).includes(message.content.toLowerCase())) {
                 // Edit embeds to say so
                 messageEmbed.setDescription("Please enter a valid field to edit!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
-                messageEmbed.addField("Valid Fields", Object.keys(validOptions).join("\n"));
+                messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
                 replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
 
                 // Get input
-                return await this.getInput(60, interaction, validOptions, outputEmbed, messageEmbed, replyMessage);
+                return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage);
             }
 
             if (message.content.toLowerCase() === "channel") {
@@ -141,7 +139,7 @@ module.exports = {
                 replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
 
                 // Get input
-                return await this.getInput(60, interaction, validOptions, outputEmbed, messageEmbed, replyMessage, "channel");
+                return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage, "channel");
             }
             
         }).catch((error) => {
