@@ -123,6 +123,127 @@ module.exports = {
                 return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
             }
 
+            // If they were prompted for a title
+            if (specific === "title") {
+                outputEmbed.setTitle(message.content);
+                messageEmbed.setDescription("Title changed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+            }
+
+            if (specific === "description") {
+                outputEmbed.setDescription(message.content);
+                messageEmbed.setDescription("Description changed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+            }
+
+            if (specific === "color") {
+                let color = message.content.split(" ")[0];
+
+                if (color.startsWith("#")) {
+                    color = color.substring(1);
+                }
+
+                if (!color.startsWith("0x")) {
+                    color = `0x${color}`;
+                }
+
+                if (isNaN(Number(color))) {
+                    messageEmbed.setDescription("Please enter a valid color!\n\n*Say \"cancel\" to go back*");
+                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+
+                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage, "color");
+                }
+
+                outputEmbed.setColor(Number(color));
+                messageEmbed.setDescription(`Color changed to ${color}!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*`);
+            }
+
+            if (specific === "user") {
+                if (message.content.toLowerCase() === "none") {
+                    outputEmbed.setAuthor(null);
+                    messageEmbed.setDescription("User successfully removed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+    
+                    // Get input
+                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
+                }
+
+                // If their message isnt a user ping
+                if (!/<@(\d+)>/.test(message.content)) {
+                    // Edit embeds to say so
+                    messageEmbed.setDescription("Please enter a valid user!\n\n*Say \"cancel\" to go back*");
+                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+
+                    // Get input
+                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage, "user");
+                }
+
+                interaction.guild.members.fetch(message.content.substring(2, message.content.length - 1)).then((member) => {
+                    outputEmbed.setAuthor(member);
+                });
+
+                messageEmbed.setDescription("User set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+            }
+
+            if (specific === "footer text") {
+                if (message.content.toLowerCase() === "none") {
+                    outputEmbed.setFooter(null);
+                    messageEmbed.setDescription("Footer successfully removed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+    
+                    // Get input
+                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
+                }
+
+                outputEmbed.setFooter({
+                    text: message.content,
+                    iconURL: outputEmbed.footer.iconURL
+                });
+                messageEmbed.setDescription("Footer text set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+            }
+
+            if (specific === "footer image") {
+                if (outputEmbed.footer.text === undefined) {
+                    messageEmbed.setDescription("You must set footer text before you can set a footer image!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+
+                    // Get input
+                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
+                }
+
+                if (message.content.toLowerCase() === "none") {
+                    outputEmbed.setFooter({
+                        text: outputEmbed.footer.text,
+                        iconURL: null
+                    });
+                    messageEmbed.setDescription("Footer image successfully removed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+    
+                    // Get input
+                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
+                }
+
+                try {
+                    let messageToURL = new URL(message.content);
+                } catch (error) {
+                    messageEmbed.setDescription("Please enter a valid image URL!\n\n*Say \"cancel\" to go back*");
+                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+
+                    // Get input
+                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage, "footer image");
+                }
+
+                outputEmbed.setFooter({
+                    text: outputEmbed.footer.text,
+                    iconURL: message.content
+                });
+
+                messageEmbed.setDescription("Footer image set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+            }
+
+            if (specific !== null) {
+                replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+                return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
+            }
+
             // If the message content isnt a valid option
             if (!Object.keys(this.validOptions).includes(message.content.toLowerCase())) {
                 // Edit embeds to say so
