@@ -40,7 +40,7 @@ module.exports = {
         await interaction.reply({ embeds: [outputEmbed, messageEmbed] });
         const replyMessage = await interaction.fetchReply();
 
-        await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage);
+        await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
     },
 
     async getInput(waitTime, interaction, outputEmbed, messageEmbed, replyMessage, specific=null) {
@@ -79,7 +79,7 @@ module.exports = {
                 replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
 
                 // Get input
-                return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage);
+                return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
             }
 
             // If they cancel after being asked for something specific
@@ -89,7 +89,7 @@ module.exports = {
                 replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
 
                 // Get input
-                return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage);
+                return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
             }
 
             // If they cancel without being asked something specific
@@ -109,7 +109,7 @@ module.exports = {
                     replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
 
                     // Get input
-                    return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage, "channel");
+                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage, "channel");
                 }
 
                 interaction.guild.channels.fetch(message.content.substring(2, message.content.length - 1)).then((channel) => {
@@ -120,7 +120,7 @@ module.exports = {
                 replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
 
                 // Get input
-                return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage);
+                return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
             }
 
             // If the message content isnt a valid option
@@ -131,7 +131,7 @@ module.exports = {
                 replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
 
                 // Get input
-                return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage);
+                return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
             }
 
             switch (message.content.toLowerCase()) {
@@ -155,7 +155,7 @@ module.exports = {
 
                     messageEmbed.setDescription(`Timestamp toggled ${timestampEnabled ? "on" : "off"}!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*`);
                     replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
-                    return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage);
+                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
                 default: outputString = "what"; break;
             }
             
@@ -163,10 +163,10 @@ module.exports = {
             replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
             
             // Get input
-            return await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage, message.content.toLowerCase());
+            return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage, message.content.toLowerCase());
         }).catch((error) => {
             console.error(error);
-            return interaction.followUp("A minute has passed with no response!\nEmbed creation cancelled.");
+            return interaction.followUp("Five minutes have passed with no response!\nEmbed creation cancelled.");
         });
     }
 }
