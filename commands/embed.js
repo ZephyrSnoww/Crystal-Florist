@@ -3,6 +3,8 @@ const { MessageCollector } = require("discord.js");
 const helpers = require("../helpers");
 
 module.exports = {
+    channel: null,
+
     data: new SlashCommandBuilder()
         .setName("embed")
         .setDescription("Create an embed using messages!"),
@@ -20,7 +22,7 @@ module.exports = {
             "timestamp": "boolean"
         }
 
-        let channel = null;
+        this.channel = null;
 
         // Create the preview embed
         let outputEmbed = helpers.createEmbed({
@@ -44,28 +46,37 @@ module.exports = {
         await interaction.reply({ embeds: [outputEmbed, messageEmbed] });
         const replyMessage = await interaction.fetchReply();
 
-        const filter = message => {
-            console.log(message.content);
-            console.log(message.author.id);
-            console.log(interaction.user.id);
-            return true
-        }
+        // const filter = message => message.content.includes("bruh");
 
-        console.log(interaction.channel);
-        await interaction.channel.awaitMessages({
-            filter,
-            max: 1,
-            time: 60000,
-            errors: ["time"]
-        }).then(async (messages) => {
-            console.log(messages.first().content);
-            return;
-        }).catch((error) => {
-            console.error(error);
-        });
+        // interaction.channel.awaitMessages({
+        //     filter: () => true,
+        //     max: 5,
+        //     time: 10000,
+        //     errors: ["time"]
+        // }).then((messages) => {
+        //     console.log(messages.first().content);
+        //     messages.first().replay("bruh");
+        //     return;
+        // }).catch((error) => {
+        //     console.error(error);
+        // });
 
-        // await this.getInput(60, interaction, validOptions, outputEmbed, messageEmbed, replyMessage);
-        console.log("done!");
+        // const collector = await interaction.channel.createMessageCollector({
+        //     filter,
+        //     max: 1,
+        //     time: 10000
+        // });
+
+        // collector.on("collect", (message) => {
+        //     console.log(message.content);
+        //     collector.stop();
+        // });
+
+        // collector.on("end", (collected) => {
+        //     console.log("done!");
+        // });
+
+        await this.getInput(60, interaction, validOptions, outputEmbed, messageEmbed, replyMessage);
     },
 
     async getInput(waitTime, interaction, validOptions, outputEmbed, messageEmbed, replyMessage, specific=null) {
@@ -73,29 +84,28 @@ module.exports = {
         const filter = (message) => message.author.id == interaction.user.id;
 
         // Wait for 1 message with a specific timeout
-        await interaction.channel.awaitMessages(filter, {
-            // filter,
+        await interaction.channel.awaitMessages({
+            filter,
             max: 1,
-            time: waitTime * 100,
+            time: waitTime * 1000,
             errors: ["time"]
         }).then(async (messages) => {
-            console.log("hello?");
             // Get the collected message
             let message = messages.first();
-            console.log(message.content);
+            message.delete();
             messageEmbed.fields = [];
 
             // If they try to finish the embed
             if (message.content.toLowerCase() === "done") {
                 // If theyve given a channel
-                if (channel) {
+                if (this.channel) {
                     // Edit the message
                     messageEmbed.setTitle("Success!");
                     messageEmbed.setDescription("Embed sent!");
                     replyMessage.edit({ embeds: [messageEmbed] });
 
                     // Send the embed
-                    return channel.send({ embeds: [outputEmbed] });
+                    return this.channel.send({ embeds: [outputEmbed] });
                 }
                 
                 // Otherwise, they havent given a channel
@@ -137,7 +147,9 @@ module.exports = {
                     return await this.getInput(60, interaction, validOptions, outputEmbed, messageEmbed, replyMessage, "channel");
                 }
 
-                channel = interaction.guild.channels.get(message.content.substring(2, message.content.length - 1));
+                interaction.guild.channels.fetch(message.content.substring(2, message.content.length - 1)).then((channel) => {
+                    this.channel = channel;
+                });
                 // Edit embeds to say so
                 messageEmbed.setDescription("Channel set successfully!\n\n*Say \"done\" to finish*");
                 replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
@@ -167,6 +179,7 @@ module.exports = {
             }
             
         }).catch((error) => {
+            console.error(error);
             return interaction.followUp("A minute has passed with no response!\nI'm no longer listening...");
         });
     }

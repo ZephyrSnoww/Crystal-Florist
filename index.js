@@ -15,7 +15,7 @@ const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('
 
 // Create a new client instance
 const client = new Client({
-    intents: [Intents.FLAGS.GUILDS]
+    intents: Object.values(Intents.FLAGS)
 });
 
 // Make a new commands collection
