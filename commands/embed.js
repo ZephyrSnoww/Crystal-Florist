@@ -38,45 +38,11 @@ module.exports = {
             description: "What would you like to change?",
             author: interaction.user
         });
-
-        // Send preview and message embeds, then get input
-        // await interaction.reply({ embeds: [outputEmbed, messageEmbed] }, { fetchReply: true }).then(async () => {
-        //     await this.getInput(60, interaction, validOptions, outputEmbed, messageEmbed, replyMessage);
-        // });
+        
         await interaction.reply({ embeds: [outputEmbed, messageEmbed] });
         const replyMessage = await interaction.fetchReply();
 
-        // const filter = message => message.content.includes("bruh");
-
-        // interaction.channel.awaitMessages({
-        //     filter: () => true,
-        //     max: 5,
-        //     time: 10000,
-        //     errors: ["time"]
-        // }).then((messages) => {
-        //     console.log(messages.first().content);
-        //     messages.first().replay("bruh");
-        //     return;
-        // }).catch((error) => {
-        //     console.error(error);
-        // });
-
-        // const collector = await interaction.channel.createMessageCollector({
-        //     filter,
-        //     max: 1,
-        //     time: 10000
-        // });
-
-        // collector.on("collect", (message) => {
-        //     console.log(message.content);
-        //     collector.stop();
-        // });
-
-        // collector.on("end", (collected) => {
-        //     console.log("done!");
-        // });
-
-        await this.getInput(60, interaction, validOptions, outputEmbed, messageEmbed, replyMessage);
+        await this.getInput(60, interaction, outputEmbed, messageEmbed, replyMessage);
     },
 
     async getInput(waitTime, interaction, validOptions, outputEmbed, messageEmbed, replyMessage, specific=null) {
