@@ -177,9 +177,6 @@ module.exports = {
                 }
 
                 let member = interaction.guild.members.cache.get(message.content.substring(3, message.content.length - 1));
-                // console.log(message.content);
-                // console.log(message.content.substring(3, message.content.length - 1));
-                // console.log(member);
                 outputEmbed.setAuthor(member.user.username, member.user.avatarURL());
 
                 messageEmbed.setDescription("User set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
