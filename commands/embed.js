@@ -139,9 +139,9 @@ module.exports = {
                 case "title": outputString = "Send the title you want the embed to have!"; break;
                 case "description": outputString = "Send the description you want the embed to have!"; break;
                 case "color": outputString = "Send the color you would like the embed to have, formatted as a hex code!"; break;
-                case "user": outputString = "Ping the user you would like the embed to have as its author!"; break;
-                case "footer text": outputString = "Send the text you would like the footer to have!"; break;
-                case "footer image": outputString = "Send a link to the image you would like the footer to have!"; break;
+                case "user": outputString = "Ping the user you would like the embed to have as its author, or say \"none\" to remove the author!"; break;
+                case "footer text": outputString = "Send the text you would like the footer to have, or say \"none\" to remove the footer!"; break;
+                case "footer image": outputString = "Send a link to the image you would like the footer to have, or say \"none\" to remove the image!"; break;
                 case "timestamp":
                     let timestampEnabled;
                     if (messageEmbed.timestamp !== null) {
