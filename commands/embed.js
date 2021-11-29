@@ -33,7 +33,7 @@ module.exports = {
         // Create the message embed
         let messageEmbed = helpers.createEmbed({
             title: "Creating embed...",
-            description: "What would you like to change?",
+            description: "What would you like to change?\n\n*Say \"cancel\" to cancel creation*",
             author: interaction.user
         });
         
