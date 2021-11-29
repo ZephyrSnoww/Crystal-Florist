@@ -84,7 +84,7 @@ module.exports = {
             // If they cancel after being asked for something specific
             if (specific && message.content.toLowerCase() === "cancel") {
                 // Return to default state
-                messageEmbed.setDescription("What would you like to change?\n\n*Say \"done\" to finish*");
+                messageEmbed.setDescription("What would you like to change?\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
                 replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
 
                 // Get input
@@ -115,7 +115,7 @@ module.exports = {
                     this.channel = channel;
                 });
                 // Edit embeds to say so
-                messageEmbed.setDescription("Channel set successfully!\n\n*Say \"done\" to finish*");
+                messageEmbed.setDescription("Channel set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
                 replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
 
                 // Get input
