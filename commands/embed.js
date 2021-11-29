@@ -158,7 +158,7 @@ module.exports = {
 
             if (specific === "user") {
                 if (message.content.toLowerCase() === "none") {
-                    outputEmbed.setAuthor(null);
+                    outputEmbed.author = null;
                     messageEmbed.setDescription("User successfully removed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
                     replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
     
@@ -167,7 +167,7 @@ module.exports = {
                 }
 
                 // If their message isnt a user ping
-                if (!/<@(\d+)>/.test(message.content)) {
+                if (!/<@!(\d+)>/.test(message.content)) {
                     // Edit embeds to say so
                     messageEmbed.setDescription("Please enter a valid user!\n\n*Say \"cancel\" to go back*");
                     replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
@@ -176,13 +176,15 @@ module.exports = {
                     return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage, "user");
                 }
 
-                interaction.guild.members.fetch(message.content.substring(2, message.content.length - 1)).then((member) => {
-                    outputEmbed.setAuthor(member);
-                });
+                let member = interaction.guild.members.cache.get(message.content.substring(3, message.content.length - 1));
+                // console.log(message.content);
+                // console.log(message.content.substring(3, message.content.length - 1));
+                // console.log(member);
+                outputEmbed.setAuthor(member.user.username, member.user.avatarURL());
 
                 messageEmbed.setDescription("User set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
             }
-
+9
             if (specific === "footer text") {
                 if (message.content.toLowerCase() === "none") {
                     outputEmbed.setFooter(null);
@@ -193,15 +195,13 @@ module.exports = {
                     return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
                 }
 
-                outputEmbed.setFooter({
-                    text: message.content,
-                    iconURL: outputEmbed.footer.iconURL
-                });
+                console.log(message.content);
+                outputEmbed.setFooter(message.content, outputEmbed.footer ? outputEmbed.footer.iconURL : null);
                 messageEmbed.setDescription("Footer text set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
             }
 
             if (specific === "footer image") {
-                if (outputEmbed.footer.text === undefined) {
+                if (outputEmbed.footer === null) {
                     messageEmbed.setDescription("You must set footer text before you can set a footer image!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
                     replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
 
@@ -210,10 +210,7 @@ module.exports = {
                 }
 
                 if (message.content.toLowerCase() === "none") {
-                    outputEmbed.setFooter({
-                        text: outputEmbed.footer.text,
-                        iconURL: null
-                    });
+                    outputEmbed.setFooter(outputEmbed.footer.text, null);
                     messageEmbed.setDescription("Footer image successfully removed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
                     replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
     
@@ -231,11 +228,7 @@ module.exports = {
                     return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage, "footer image");
                 }
 
-                outputEmbed.setFooter({
-                    text: outputEmbed.footer.text,
-                    iconURL: message.content
-                });
-
+                outputEmbed.setFooter(outputEmbed.footer.text, message.content);
                 messageEmbed.setDescription("Footer image set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
             }
 
