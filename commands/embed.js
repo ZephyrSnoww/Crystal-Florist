@@ -32,7 +32,7 @@ module.exports = {
 
         // Create the message embed
         let messageEmbed = helpers.createEmbed({
-            title: "Creating embed...",
+            title: `Creating embed...`,
             description: "What would you like to change?\n\n*Say \"cancel\" to cancel creation*",
             author: interaction.user
         });
@@ -62,6 +62,10 @@ module.exports = {
             message.delete();
             messageEmbed.fields = [];
 
+            if (this.channel !== null) {
+                messageEmbed.setTitle(`Creating embed for channel ${this.channel.name}`);
+            }
+
             // If they try to finish the embed
             if (message.content.toLowerCase() === "done") {
                 // If theyve given a channel
@@ -88,6 +92,7 @@ module.exports = {
             if (specific && message.content.toLowerCase() === "cancel") {
                 // Return to default state
                 messageEmbed.setDescription("What would you like to change?\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
                 replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
 
                 // Get input
@@ -114,26 +119,31 @@ module.exports = {
                     return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage, "channel");
                 }
 
-                interaction.guild.channels.fetch(message.content.substring(2, message.content.length - 1)).then((channel) => {
+                return interaction.guild.channels.fetch(message.content.substring(2, message.content.length - 1)).then(async (channel) => {
                     this.channel = channel;
+                    messageEmbed.setTitle(`Creating embed for channel ${this.channel.name}`);
+    
+                    // Edit embeds to say so
+                    messageEmbed.setDescription("Channel set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                    messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
+                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+    
+                    // Get input
+                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
                 });
-                // Edit embeds to say so
-                messageEmbed.setDescription("Channel set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
-                replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
-
-                // Get input
-                return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
             }
 
             // If they were prompted for a title
             if (specific === "title") {
                 outputEmbed.setTitle(message.content);
                 messageEmbed.setDescription("Title changed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
             }
 
             if (specific === "description") {
                 outputEmbed.setDescription(message.content);
                 messageEmbed.setDescription("Description changed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
             }
 
             if (specific === "color") {
@@ -156,12 +166,14 @@ module.exports = {
 
                 outputEmbed.setColor(Number(color));
                 messageEmbed.setDescription(`Color changed to ${color}!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*`);
+                messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
             }
 
             if (specific === "user") {
                 if (message.content.toLowerCase() === "none") {
                     outputEmbed.author = null;
                     messageEmbed.setDescription("User successfully removed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                    messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
                     replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
     
                     // Get input
@@ -182,26 +194,29 @@ module.exports = {
                 outputEmbed.setAuthor(member.user.username, member.user.avatarURL());
 
                 messageEmbed.setDescription("User set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
             }
 9
             if (specific === "footer text") {
                 if (message.content.toLowerCase() === "none") {
                     outputEmbed.setFooter(null);
                     messageEmbed.setDescription("Footer successfully removed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                    messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
                     replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
     
                     // Get input
                     return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
                 }
 
-                console.log(message.content);
                 outputEmbed.setFooter(message.content, outputEmbed.footer ? outputEmbed.footer.iconURL : null);
                 messageEmbed.setDescription("Footer text set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
             }
 
             if (specific === "footer image") {
                 if (outputEmbed.footer === null) {
                     messageEmbed.setDescription("You must set footer text before you can set a footer image!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                    messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
                     replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
 
                     // Get input
@@ -211,6 +226,7 @@ module.exports = {
                 if (message.content.toLowerCase() === "none") {
                     outputEmbed.setFooter(outputEmbed.footer.text, null);
                     messageEmbed.setDescription("Footer image successfully removed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                    messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
                     replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
     
                     // Get input
@@ -229,6 +245,7 @@ module.exports = {
 
                 outputEmbed.setFooter(outputEmbed.footer.text, message.content);
                 messageEmbed.setDescription("Footer image set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
             }
 
             if (specific !== null) {
@@ -257,16 +274,17 @@ module.exports = {
                 case "footer image": outputString = "Send a link to the image you would like the footer to have, or say \"none\" to remove the image!"; break;
                 case "timestamp":
                     let timestampEnabled;
-                    if (messageEmbed.timestamp !== null) {
+                    if (outputEmbed.timestamp !== null) {
                         outputEmbed.setTimestamp(null);
                         timestampEnabled = false;
                     }
                     else {
-                        messageEmbed.setTimestamp();
+                        outputEmbed.setTimestamp();
                         timestampEnabled = true;
                     }
 
                     messageEmbed.setDescription(`Timestamp toggled ${timestampEnabled ? "on" : "off"}!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*`);
+                    messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
                     replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
                     return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
                 default: outputString = "what"; break;
