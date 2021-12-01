@@ -25,7 +25,8 @@ module.exports = {
                 embeds: [
                     helpers.createEmbed({
                         title: "Whoops!",
-                        description: "You must provide at least two options!"
+                        description: "You must provide at least two options!",
+                        author: interaction.user
                     })
                 ],
                 ephemeral: true
@@ -44,7 +45,8 @@ module.exports = {
                             name: "Options You Gave",
                             value: splitOptions.join("\n")
                         }
-                    ]
+                    ],
+                    author: interaction.user
                 })
             ],
             ephemeral: hidden
