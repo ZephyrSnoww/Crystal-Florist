@@ -1,4 +1,5 @@
 const fs = require("fs");
+const Canvas = require("canvas");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 const { Client, Intents, Collection } = require("discord.js");
@@ -11,7 +12,7 @@ const TOKEN = process.env.TOKEN;
 const GUILD_ID = process.env.GUILD_ID;
 
 // Make an array of all command file names
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
 
 // Create a new client instance
 const client = new Client({
@@ -31,11 +32,11 @@ for (const file of commandFiles) {
 }
 
 // When the client is first ready
-client.once('ready', () => {
+client.once("ready", () => {
     // Say so
-	console.log('Ready!');
+	console.log("Ready!");
 	const CLIENT_ID = client.user.id;
-	const rest = new REST({ version: '9' }).setToken(TOKEN);
+	const rest = new REST({ version: "9" }).setToken(TOKEN);
     // Register commands
 	(async () => {
 		try {
@@ -44,7 +45,7 @@ client.once('ready', () => {
                     body: commands
                 },
             );
-            console.log('Successfully registered application commands!');
+            console.log("Successfully registered application commands!");
 		} catch (error) {
 			if (error) console.error(error);
 		}
@@ -52,7 +53,7 @@ client.once('ready', () => {
 });
 
 // When the client recieves an interaction
-client.on('interactionCreate', async interaction => {
+client.on("interactionCreate", async (interaction) => {
     // Only listen for commands
 	if (!interaction.isCommand()) return;
 
@@ -64,9 +65,14 @@ client.on('interactionCreate', async interaction => {
 		await command.execute(interaction);
 	} catch (error) {
 		if (error) { console.error(error); }
-		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		await interaction.reply({ content: "There was an error while executing this command!", ephemeral: true });
 	}
 });
 
+// When someone joins the server
+client.on("guildMemberAdd", async (member) => {
+	if (member.guild.id != GUILD_ID) return;
+});
+
 // Login using the given token
-client.login(process.env.TOKEN);
+client.login(TOKEN);
