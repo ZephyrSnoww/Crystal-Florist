@@ -1,8 +1,8 @@
 const fs = require("fs");
-const Canvas = require("canvas");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 const { Client, Intents, Collection } = require("discord.js");
+const { sendWelcomeImage } = require("./welcome_images");
 
 // Register .env file
 require("dotenv").config();
@@ -69,9 +69,15 @@ client.on("interactionCreate", async (interaction) => {
 	}
 });
 
+client.on("messageCreate", async (message) => {
+	if (message.content === "test join img") {
+		return await sendWelcomeImage(message, true);
+	}
+});
+
 // When someone joins the server
 client.on("guildMemberAdd", async (member) => {
-	if (member.guild.id != GUILD_ID) return;
+	// await sendWelcomeImage(member);
 });
 
 // Login using the given token
