@@ -9,7 +9,7 @@ module.exports = {
         if (context.guild.id != GUILD_ID) return;
 
         // Gte all welcome images
-        let welcomeImages = fs.readdirSync("./data/images/welcome_images").filter(file => file.endsWith(".jpg"));
+        let welcomeImages = fs.readdirSync("./data/images/welcome_images").filter(file => file.endsWith(".png"));
         
         // Create a new canvas and load a random welcome image
         const canvas = Canvas.createCanvas(700, 250);
@@ -36,6 +36,7 @@ module.exports = {
             width -= 10;
             height -= (45 / 8);
         }
+
         imageContext.drawImage(welcomeImage, 0, 0, width, height);
 
         // Draw a transparent black rectangle
@@ -53,10 +54,10 @@ module.exports = {
 
         // Get the users profile picture
         if (isTest) {
-            pfp = await Canvas.loadImage(await context.author.avatarURL({ format: "jpg", size: 256 }));
+            pfp = await Canvas.loadImage(await context.author.avatarURL({ format: "png", size: 256 }));
         }
         else {
-            pfp = await Canvas.loadImage(await context.avatarURL({ format: "jpg", size: 256 }));
+            pfp = await Canvas.loadImage(await context.avatarURL({ format: "png", size: 256 }));
         }
 
         // Draw a clipping mask for the pfp
@@ -69,7 +70,7 @@ module.exports = {
         imageContext.drawImage(pfp, 25, 25, 200, 200);
 
         // Turn the canvas into an attachment
-        const attachment = new MessageAttachment(canvas.toBuffer(), "welcome-image.jpg");
+        const attachment = new MessageAttachment(canvas.toBuffer(), "welcome-image.png");
 
         // Send the attachment
         if (!isTest) {
