@@ -1,6 +1,7 @@
 const fs = require("fs");
 const Canvas = require("canvas");
 const { MessageAttachment } = require("discord.js");
+const { welcomeMessages } = require("./data/misc/random_messages.json");
 
 module.exports = {
     async sendWelcomeImage(context, isTest=false) {
@@ -43,12 +44,38 @@ module.exports = {
         imageContext.fillStyle = "rgba(0, 0, 0, 0.5)";
         imageContext.fillRect(10, 10, canvas.width - 20, canvas.height - 20);
 
+        // Draw "welcome, [user]!" text
         applyText({
-            canvas: canvas,
-            text: "Welcome, " + (isTest ? context.author.username : context.username) + "!",
+            canvas,
+            text: `Welcome, ${isTest ? context.author.username : context.username}!`,
             x: 240,
             y: canvas.height / 2.1
         });
+
+        // Get the number of users in the server
+        let members = context.guild.members.cache.filter(member => !member.user.bot);
+        let memberCount = members.size;
+        let i = memberCount % 10;
+        let j = memberCount % 100;
+
+        // Draw "you are the nth member!" text
+        applyText({
+            canvas,
+            text: `You are the ${memberCount}${(i === 1 && j !== 11) ? "st" : ((i === 2 && j !== 12) ? "nd" : ((i === 3 && j !== 13) ? "rd" : "th"))} member!`,
+            x: 245,
+            y: canvas.height / 1.6,
+            defaultSize: 40
+        });
+
+        let welcomeText = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+
+        applyText({
+            canvas,
+            text: welcomeText,
+            x: 245,
+            y: canvas.height / 1.3,
+            defaultSize: 40
+        })
 
         let pfp;
 
