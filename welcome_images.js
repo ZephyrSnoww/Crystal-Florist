@@ -29,7 +29,7 @@ module.exports = {
             context.fillStyle = color;
             context.fillText(text, x, y);
         }
-
+        
         // Draw the welcome image
         let width = welcomeImage.width;
         let height = welcomeImage.height;
@@ -47,7 +47,7 @@ module.exports = {
         // Draw "welcome, [user]!" text
         applyText({
             canvas,
-            text: `Welcome, ${isTest ? context.author.username : context.username}!`,
+            text: `Welcome, ${isTest ? context.author.username : context.user.username}!`,
             x: 240,
             y: canvas.height / 2.1
         });
@@ -84,7 +84,7 @@ module.exports = {
             pfp = await Canvas.loadImage(await context.author.avatarURL({ format: "png", size: 256 }));
         }
         else {
-            pfp = await Canvas.loadImage(await context.avatarURL({ format: "png", size: 256 }));
+            pfp = await Canvas.loadImage(await context.user.avatarURL({ format: "png", size: 256 }));
         }
 
         // Draw a clipping mask for the pfp

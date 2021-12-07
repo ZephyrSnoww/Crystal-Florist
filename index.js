@@ -70,14 +70,16 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 client.on("messageCreate", async (message) => {
-	if (message.content === "test join img") {
-		return await sendWelcomeImage(message, true);
-	}
+	// if (message.content === "test join img") {
+	// 	return await sendWelcomeImage(message, true);
+	// }
 });
 
 // When someone joins the server
 client.on("guildMemberAdd", async (member) => {
-	// await sendWelcomeImage(member);
+	console.log(`${member.user.username} joined!`);
+	await sendWelcomeImage(member);
+	}
 });
 
 // Login using the given token
