@@ -79,7 +79,6 @@ client.on("messageCreate", async (message) => {
 client.on("guildMemberAdd", async (member) => {
 	console.log(`${member.user.username} joined!`);
 	await sendWelcomeImage(member);
-	}
 });
 
 // Login using the given token
