@@ -196,7 +196,7 @@ module.exports = {
                 messageEmbed.setDescription("User set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
                 messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
             }
-9
+
             if (specific === "footer text") {
                 if (message.content.toLowerCase() === "none") {
                     outputEmbed.setFooter(null);
