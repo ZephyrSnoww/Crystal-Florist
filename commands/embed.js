@@ -297,7 +297,7 @@ module.exports = {
             return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage, message.content.toLowerCase());
         }).catch((error) => {
             console.error(error);
-            return interaction.followUp("Five minutes have passed with no response!\nEmbed creation cancelled.");
+            return interaction.followUp("Five minutes have passed with no response!\n(That, or I somehow got an error!)\nEmbed creation cancelled.");
         });
     }
 }
