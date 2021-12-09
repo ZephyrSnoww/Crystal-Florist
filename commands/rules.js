@@ -2,7 +2,15 @@ const { SlashCommandBuilder } = require("@discordjs/builders");
 const helpers = require("../helpers");
 
 module.exports = {
-    modOnly = true,
+    modOnly: true,
+
+    rulesetOptions: {
+        name: "default ruleset",
+        channel: null,
+        rules: [
+            "this is a rule!"
+        ],
+    },
 
     data: new SlashCommandBuilder()
         .setName("rules")
@@ -14,7 +22,7 @@ module.exports = {
         let replyEmbed;
         let specific = null;
 
-        if (rulesets === {}) {
+        if (Object.keys(rulesets).length === 0) {
             replyEmbed = helpers.createEmbed({
                 title: "No rulesets exist!",
                 description: "Would you like to create one? (yes/no)",
@@ -26,12 +34,12 @@ module.exports = {
         else {
             replyEmbed = helpers.createEmbed({
                 title: "Select a ruleset",
-                description: "Send the name of the ruleset you'd like to edit!",
+                description: "Send the name of the ruleset you'd like to edit!\nAlternatively, say \"new ruleset\" to create a new one!",
                 author: interaction.user,
                 fields: [
                     {
                         name: "Rulesets",
-                        value: Object.keys(rulsets).join("\n")
+                        value: Object.keys(rulesets).join("\n")
                     }
                 ]
             });
@@ -60,6 +68,14 @@ module.exports = {
             let message = messages.first();
             let outputString = "";
             message.delete();
+
+            if (specific === "createRuleset") {
+                if (message.content.toLowerCase() === "no") {
+                    replyEmbed.setTitle("Alright!");
+                    replyEmbed.setDescription("No ruleset created!");
+                    return replyMessage.edit({ embeds: [replyEmbed] });
+                }
+            }
         });
     }
 }
