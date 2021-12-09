@@ -62,7 +62,7 @@ client.on("interactionCreate", async (interaction) => {
 	if (!command) return;
 
 	if (command.modOnly) {
-		if (!interaction.author.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
+		if (!interaction.memberPermissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
 			return await interaction.reply({
 				content: "You don't have permission to do that command!",
 				ephemeral: true
