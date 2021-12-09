@@ -3,6 +3,8 @@ const { MessageCollector } = require("discord.js");
 const helpers = require("../helpers");
 
 module.exports = {
+    modOnly: true,
+
     channel: null,
     validOptions: {
         "channel": "channel",

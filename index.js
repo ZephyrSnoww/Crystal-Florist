@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
-const { Client, Intents, Collection } = require("discord.js");
+const { Client, Intents, Collection, Permissions } = require("discord.js");
 const { sendWelcomeImage } = require("./welcome_images");
 
 // Register .env file
@@ -60,6 +60,15 @@ client.on("interactionCreate", async (interaction) => {
 	const command = client.commands.get(interaction.commandName);
 
 	if (!command) return;
+
+	if (command.modOnly) {
+		if (!interaction.author.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
+			return await interaction.reply({
+				content: "You don't have permission to do that command!",
+				ephemeral: true
+			});
+		}
+	}
 
 	try {
 		await command.execute(interaction);

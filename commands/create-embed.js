@@ -2,6 +2,8 @@ const { SlashCommandBuilder } = require("@discordjs/builders");
 const helpers = require("../helpers");
 
 module.exports = {
+    modOnly: true,
+
     data: new SlashCommandBuilder()
         .setName("create-embed")
         .setDescription("Create an embed using arguments!")
