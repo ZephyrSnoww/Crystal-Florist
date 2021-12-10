@@ -33,21 +33,21 @@ module.exports = {
         });
 
         // Create the message embed
-        let messageEmbed = helpers.createEmbed({
+        let replyEmbed = helpers.createEmbed({
             title: `Creating embed...`,
             description: "What would you like to change?\n\n*Say \"cancel\" to cancel creation*",
             author: interaction.user
         });
 
-        messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
+        replyEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
         
-        await interaction.reply({ embeds: [outputEmbed, messageEmbed] });
+        await interaction.reply({ embeds: [outputEmbed, replyEmbed] });
         const replyMessage = await interaction.fetchReply();
 
-        await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
+        await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage);
     },
 
-    async getInput(waitTime, interaction, outputEmbed, messageEmbed, replyMessage, specific=null) {
+    async getInput(waitTime, interaction, outputEmbed, replyEmbed, replyMessage, specific=null) {
         // Define a filter for message collection
         const filter = (message) => message.author.id == interaction.user.id;
 
@@ -62,10 +62,10 @@ module.exports = {
             let message = messages.first();
             let outputString = "";
             message.delete();
-            messageEmbed.fields = [];
+            replyEmbed.fields = [];
 
             if (this.channel !== null) {
-                messageEmbed.setTitle(`Creating embed for channel ${this.channel.name}`);
+                replyEmbed.setTitle(`Creating embed for channel ${this.channel.name}`);
             }
 
             // If they try to finish the embed
@@ -73,9 +73,9 @@ module.exports = {
                 // If theyve given a channel
                 if (this.channel) {
                     // Edit the message
-                    messageEmbed.setTitle("Success!");
-                    messageEmbed.setDescription("Embed sent!");
-                    replyMessage.edit({ embeds: [messageEmbed] });
+                    replyEmbed.setTitle("Success!");
+                    replyEmbed.setDescription("Embed sent!");
+                    replyMessage.edit({ embeds: [replyEmbed] });
 
                     // Send the embed
                     return this.channel.send({ embeds: [outputEmbed] });
@@ -83,30 +83,30 @@ module.exports = {
                 
                 // Otherwise, they havent given a channel
                 // Tell them they have to
-                messageEmbed.setDescription("You must specify the channel you want me to send the embed in!\n\n*Say \"cancel\" to cancel creation*");
-                replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+                replyEmbed.setDescription("You must specify the channel you want me to send the embed in!\n\n*Say \"cancel\" to cancel creation*");
+                replyMessage.edit({ embeds: [outputEmbed, replyEmbed] });
 
                 // Get input
-                return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
+                return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage);
             }
 
             // If they cancel after being asked for something specific
             if (specific && message.content.toLowerCase() === "cancel") {
                 // Return to default state
-                messageEmbed.setDescription("What would you like to change?\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
-                messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
-                replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+                replyEmbed.setDescription("What would you like to change?\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                replyEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
+                replyMessage.edit({ embeds: [outputEmbed, replyEmbed] });
 
                 // Get input
-                return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
+                return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage);
             }
 
             // If they cancel without being asked something specific
             if (message.content.toLowerCase() === "cancel") {
                 // Edit the embed, stop listening
-                messageEmbed.setTitle("Alright!");
-                messageEmbed.setDescription("Embed creation cancelled!");
-                return replyMessage.edit({ embeds: [messageEmbed] });
+                replyEmbed.setTitle("Alright!");
+                replyEmbed.setDescription("Embed creation cancelled!");
+                return replyMessage.edit({ embeds: [replyEmbed] });
             }
 
             // If they were prompted for a channel
@@ -114,38 +114,38 @@ module.exports = {
                 // If their message isnt a channel tag
                 if (!/<#(\d+)>/.test(message.content)) {
                     // Edit embeds to say so
-                    messageEmbed.setDescription("Please enter a valid channel!\n\n*Say \"cancel\" to go back*");
-                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+                    replyEmbed.setDescription("Please enter a valid channel!\n\n*Say \"cancel\" to go back*");
+                    replyMessage.edit({ embeds: [outputEmbed, replyEmbed] });
 
                     // Get input
-                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage, "channel");
+                    return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage, "channel");
                 }
 
                 return interaction.guild.channels.fetch(message.content.substring(2, message.content.length - 1)).then(async (channel) => {
                     this.channel = channel;
-                    messageEmbed.setTitle(`Creating embed for channel ${this.channel.name}`);
+                    replyEmbed.setTitle(`Creating embed for channel ${this.channel.name}`);
     
                     // Edit embeds to say so
-                    messageEmbed.setDescription("Channel set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
-                    messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
-                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+                    replyEmbed.setDescription("Channel set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                    replyEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
+                    replyMessage.edit({ embeds: [outputEmbed, replyEmbed] });
     
                     // Get input
-                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
+                    return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage);
                 });
             }
 
             // If they were prompted for a title
             if (specific === "title") {
                 outputEmbed.setTitle(message.content);
-                messageEmbed.setDescription("Title changed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
-                messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
+                replyEmbed.setDescription("Title changed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                replyEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
             }
 
             if (specific === "description") {
                 outputEmbed.setDescription(message.content);
-                messageEmbed.setDescription("Description changed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
-                messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
+                replyEmbed.setDescription("Description changed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                replyEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
             }
 
             if (specific === "color") {
@@ -160,110 +160,110 @@ module.exports = {
                 }
 
                 if (isNaN(Number(color))) {
-                    messageEmbed.setDescription("Please enter a valid color!\n\n*Say \"cancel\" to go back*");
-                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+                    replyEmbed.setDescription("Please enter a valid color!\n\n*Say \"cancel\" to go back*");
+                    replyMessage.edit({ embeds: [outputEmbed, replyEmbed] });
 
-                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage, "color");
+                    return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage, "color");
                 }
 
                 outputEmbed.setColor(Number(color));
-                messageEmbed.setDescription(`Color changed to ${color}!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*`);
-                messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
+                replyEmbed.setDescription(`Color changed to ${color}!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*`);
+                replyEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
             }
 
             if (specific === "user") {
                 if (message.content.toLowerCase() === "none") {
                     outputEmbed.author = null;
-                    messageEmbed.setDescription("User successfully removed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
-                    messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
-                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+                    replyEmbed.setDescription("User successfully removed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                    replyEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
+                    replyMessage.edit({ embeds: [outputEmbed, replyEmbed] });
     
                     // Get input
-                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
+                    return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage);
                 }
 
                 // If their message isnt a user ping
                 if (!/<@!(\d+)>/.test(message.content)) {
                     // Edit embeds to say so
-                    messageEmbed.setDescription("Please enter a valid user!\n\n*Say \"cancel\" to go back*");
-                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+                    replyEmbed.setDescription("Please enter a valid user!\n\n*Say \"cancel\" to go back*");
+                    replyMessage.edit({ embeds: [outputEmbed, replyEmbed] });
 
                     // Get input
-                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage, "user");
+                    return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage, "user");
                 }
 
                 let member = interaction.guild.members.cache.get(message.content.substring(3, message.content.length - 1));
                 outputEmbed.setAuthor(member.user.username, member.user.avatarURL());
 
-                messageEmbed.setDescription("User set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
-                messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
+                replyEmbed.setDescription("User set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                replyEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
             }
 
             if (specific === "footer text") {
                 if (message.content.toLowerCase() === "none") {
                     outputEmbed.setFooter(null);
-                    messageEmbed.setDescription("Footer successfully removed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
-                    messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
-                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+                    replyEmbed.setDescription("Footer successfully removed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                    replyEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
+                    replyMessage.edit({ embeds: [outputEmbed, replyEmbed] });
     
                     // Get input
-                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
+                    return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage);
                 }
 
                 outputEmbed.setFooter(message.content, outputEmbed.footer ? outputEmbed.footer.iconURL : null);
-                messageEmbed.setDescription("Footer text set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
-                messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
+                replyEmbed.setDescription("Footer text set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                replyEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
             }
 
             if (specific === "footer image") {
                 if (outputEmbed.footer === null) {
-                    messageEmbed.setDescription("You must set footer text before you can set a footer image!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
-                    messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
-                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+                    replyEmbed.setDescription("You must set footer text before you can set a footer image!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                    replyEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
+                    replyMessage.edit({ embeds: [outputEmbed, replyEmbed] });
 
                     // Get input
-                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
+                    return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage);
                 }
 
                 if (message.content.toLowerCase() === "none") {
                     outputEmbed.setFooter(outputEmbed.footer.text, null);
-                    messageEmbed.setDescription("Footer image successfully removed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
-                    messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
-                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+                    replyEmbed.setDescription("Footer image successfully removed!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                    replyEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
+                    replyMessage.edit({ embeds: [outputEmbed, replyEmbed] });
     
                     // Get input
-                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
+                    return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage);
                 }
 
                 try {
                     let messageToURL = new URL(message.content);
                 } catch (error) {
-                    messageEmbed.setDescription("Please enter a valid image URL!\n\n*Say \"cancel\" to go back*");
-                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+                    replyEmbed.setDescription("Please enter a valid image URL!\n\n*Say \"cancel\" to go back*");
+                    replyMessage.edit({ embeds: [outputEmbed, replyEmbed] });
 
                     // Get input
-                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage, "footer image");
+                    return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage, "footer image");
                 }
 
                 outputEmbed.setFooter(outputEmbed.footer.text, message.content);
-                messageEmbed.setDescription("Footer image set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
-                messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
+                replyEmbed.setDescription("Footer image set successfully!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                replyEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
             }
 
             if (specific !== null) {
-                replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
-                return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
+                replyMessage.edit({ embeds: [outputEmbed, replyEmbed] });
+                return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage);
             }
 
             // If the message content isnt a valid option
             if (!Object.keys(this.validOptions).includes(message.content.toLowerCase())) {
                 // Edit embeds to say so
-                messageEmbed.setDescription("Please enter a valid field to edit!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
-                messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
-                replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+                replyEmbed.setDescription("Please enter a valid field to edit!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*");
+                replyEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
+                replyMessage.edit({ embeds: [outputEmbed, replyEmbed] });
 
                 // Get input
-                return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
+                return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage);
             }
 
             switch (message.content.toLowerCase()) {
@@ -285,18 +285,18 @@ module.exports = {
                         timestampEnabled = true;
                     }
 
-                    messageEmbed.setDescription(`Timestamp toggled ${timestampEnabled ? "on" : "off"}!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*`);
-                    messageEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
-                    replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
-                    return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage);
+                    replyEmbed.setDescription(`Timestamp toggled ${timestampEnabled ? "on" : "off"}!\n\n*Say \"cancel\" to cancel creation, or \"done\" to finish*`);
+                    replyEmbed.addField("Valid Fields", Object.keys(this.validOptions).join("\n"));
+                    replyMessage.edit({ embeds: [outputEmbed, replyEmbed] });
+                    return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage);
                 default: outputString = "what"; break;
             }
             
-            messageEmbed.setDescription(`${outputString}\n\n*Say \"cancel\" to go back*`);
-            replyMessage.edit({ embeds: [outputEmbed, messageEmbed] });
+            replyEmbed.setDescription(`${outputString}\n\n*Say \"cancel\" to go back*`);
+            replyMessage.edit({ embeds: [outputEmbed, replyEmbed] });
             
             // Get input
-            return await this.getInput(60*5, interaction, outputEmbed, messageEmbed, replyMessage, message.content.toLowerCase());
+            return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage, message.content.toLowerCase());
         }).catch((error) => {
             console.error(error);
             return interaction.followUp("Five minutes have passed with no response!\n(That, or I somehow got an error!)\nEmbed creation cancelled.");
