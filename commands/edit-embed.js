@@ -5,7 +5,8 @@ const helpers = require("../helpers");
 module.exports = {
     modOnly: true,
 
-    channel: null,
+    channelToEdit: null,
+    messageToEdit: null,
     validOptions: {
         "channel": "channel",
         "title": "string",
@@ -22,25 +23,28 @@ module.exports = {
         .setDescription("Edit an embed using messages!"),
 
     async execute(interaction) {
+        // Create reply embed
         let replyEmbed = helpers.createEmbed({
             title: "Alright!",
-            description: "Send the ID of the message containing the embed you want to edit!",
+            description: "Send the ID of the message containing the embed you want to edit!\n\n*Say \"cancel\" to cancel creation*",
             author: interaction.user
         });
 
+        // Reply and get reply object
         await interaction.reply({ embeds: [replyEmbed] });
         let replyMessage = await interaction.fetchReply();
 
+        // Await input
         await this.getInput({
             waitTime: 60 * 5,
             interaction,
             replyEmbed,
             replyMessage,
-            specific: "getEmbedID"
+            specific: "getChannelID"
         });
     },
 
-    async getInput({waitTime=60, interaction, outputEmbed=undefined, replyEmbed, replyMessage, specific=null}) {
+    async getInput({waitTime=60, interaction, replyEmbed, replyMessage, specific=null}) {
         // Define a filter for message collection
         const filter = (message) => message.author.id == interaction.user.id;
 
@@ -53,9 +57,62 @@ module.exports = {
         }).then(async (messages) => {
             // Get the collected message
             let message = messages.first();
+            let invalidInput = false;
             let outputString = "";
             message.delete();
-            // replyEmbed.fields = [];
+            
+            replyEmbed.fields = [];
+
+            // If they have an embed selected
+            if (this.messageToEdit) {
+                replyEmbed.setTitle(`Editing embed in channel ${this.messageToEdit}`);
+            }
+
+            // If they're cancelling after being asked a specific thing
+            if (specific && message.content.toLowerCase() === "cancel") {
+                // If the specific thing was the embed ID, just ignore it
+                if (specific === "getChannelID" || specific === "getMessageID") {
+                    pass
+                }
+                // Otherwise, return to the default state
+                else {
+                    replyEmbed.setDescription("What would you like to edit?");
+                }
+            }
+
+            // If they were asked for an embed ID (to edit)
+            if (specific === "getChannelID") {
+                // Check if they gave a valid number
+                if (Number(message.content) === NaN) {
+                    invalidInput = true;
+                }
+
+                if (!invalidInput) {
+                    interaction.guild.channels.fetch(message.content).then((channel) => {
+                        this.channelToEdit = channel;
+                    }).catch(console.error);
+
+                    console.log(message.content);
+                    console.log(this.channelToEdit);
+                }
+
+                // If the input was invalid, say so
+                if (invalidInput) {
+                    replyEmbed.setTitle("Whoops!");
+                    replyEmbed.setDescription("You must send a valid ID!\n\n*Say \"cancel\" to cancel creation*");
+
+                    replyMessage.edit({ embeds: [replyEmbed] });
+
+                    return await this.getInput({
+                        waitTime: 60*5,
+                        interaction,
+                        replyEmbed,
+                        replyMessage,
+                        specific: "getEmbedID"
+                    });
+                }
+            }
+
 
             // if (this.channel !== null) {
             //     replyEmbed.setTitle(`Creating embed for channel ${this.channel.name}`);
