@@ -26,7 +26,7 @@ module.exports = {
         // Create reply embed
         let replyEmbed = helpers.createEmbed({
             title: "Alright!",
-            description: "Send the ID of the message containing the embed you want to edit!\n\n*Say \"cancel\" to cancel creation*",
+            description: "Send the ID of the channel that contains the embed you want to edit!\n\n*Say \"cancel\" to cancel creation*",
             author: interaction.user
         });
 
@@ -70,20 +70,22 @@ module.exports = {
 
             // If they're cancelling after being asked a specific thing
             if (specific && message.content.toLowerCase() === "cancel") {
-                // If the specific thing was the embed ID, just ignore it
-                if (specific === "getChannelID" || specific === "getMessageID") {
-                    pass
-                }
-                // Otherwise, return to the default state
-                else {
+                // If the specific thing wasnt the embed ID, return to normal state
+                if (!(specific === "getChannelID" || specific === "getMessageID")) {
                     replyEmbed.setDescription("What would you like to edit?");
+                }
+                else {
+                    replyEmbed.setTitle("Alright!");
+                    replyEmbed.setDescription("Embed editing cancelled.");
+                    return replyMessage.edit({ embeds: [replyEmbed] });
                 }
             }
 
             // If they were asked for an embed ID (to edit)
             if (specific === "getChannelID") {
                 // Check if they gave a valid number
-                if (Number(message.content) === NaN) {
+                console.log(Number(message.content));
+                if (Number(message.content) == NaN) {
                     invalidInput = true;
                 }
 
@@ -108,7 +110,7 @@ module.exports = {
                         interaction,
                         replyEmbed,
                         replyMessage,
-                        specific: "getEmbedID"
+                        specific: "getChannelID"
                     });
                 }
             }
