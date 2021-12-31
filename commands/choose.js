@@ -18,7 +18,7 @@ module.exports = {
         const options = interaction.options.getString("options");
         const hidden = interaction.options.getBoolean("hidden") || false;
 
-        let splitOptions = options.split(", ");
+        let splitOptions = options.split(/,\s*/gm);
 
         if (splitOptions.length === 1) {
             return interaction.reply({
