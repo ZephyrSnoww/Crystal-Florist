@@ -266,10 +266,12 @@ module.exports = {
                 return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage);
             }
 
+            let waitTime_ = 60*5;
+
             switch (message.content.toLowerCase()) {
                 case "channel": outputString = "Send the channel you would like to send this embed in!"; break;
                 case "title": outputString = "Send the title you want the embed to have!"; break;
-                case "description": outputString = "Send the description you want the embed to have!"; break;
+                case "description": outputString = "Send the description you want the embed to have!"; waitTime_ = 60*10; break;
                 case "color": outputString = "Send the color you would like the embed to have, formatted as a hex code!"; break;
                 case "user": outputString = "Ping the user you would like the embed to have as its author, or say \"none\" to remove the author!"; break;
                 case "footer text": outputString = "Send the text you would like the footer to have, or say \"none\" to remove the footer!"; break;
@@ -296,7 +298,7 @@ module.exports = {
             replyMessage.edit({ embeds: [outputEmbed, replyEmbed] });
             
             // Get input
-            return await this.getInput(60*5, interaction, outputEmbed, replyEmbed, replyMessage, message.content.toLowerCase());
+            return await this.getInput(waitTime_, interaction, outputEmbed, replyEmbed, replyMessage, message.content.toLowerCase());
         }).catch((error) => {
             console.error(error);
             return interaction.followUp("Five minutes have passed with no response!\n(That, or I somehow got an error!)\nEmbed creation cancelled.");
