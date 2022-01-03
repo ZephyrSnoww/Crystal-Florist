@@ -133,7 +133,7 @@ module.exports = {
                         this.channelToEdit = channel;
 
                         replyEmbed.setTitle("Alright!");
-                        replyEmbed.setDescription("Send the ID of the message that contains the embed you want to edit!\n\n*Say \"cancel\" to cancel creation*");
+                        replyEmbed.setDescription("Send the ID of the channel that contains the embed you want to edit!\n\n*Say \"cancel\" to cancel creation*");
                         replyMessage.edit({ embeds: this.embedToEdit ? [this.embedToEdit, replyEmbed] : [replyEmbed] });
     
                         return await this.getInput({
@@ -143,7 +143,9 @@ module.exports = {
                             replyMessage,
                             specific: "getMessageID"
                         });
-                    }).catch(console.error);
+                    }).catch((e) => {
+                        invalidInput = true;
+                    });
                 }
 
                 // If the input was invalid, say so
@@ -182,7 +184,9 @@ module.exports = {
                             replyMessage,
                             specific: "fieldToEdit"
                         });
-                    }).catch(console.error);
+                    }).catch((e) => {
+                        invalidInput = true;
+                    });
                 }
 
                 if (invalidInput) {
@@ -384,9 +388,11 @@ module.exports = {
                     });
                 }
 
+                let waitTime_ = 60*5;
+
                 switch (message.content.toLowerCase()) {
                     case "title": outputString = "Send the title you want the embed to have!"; break;
-                    case "description": outputString = "Send the description you want the embed to have!"; break;
+                    case "description": outputString = "Send the description you want the embed to have!"; waitTime_ = 60*10; break;
                     case "color": outputString = "Send the color you would like the embed to have, formatted as a hex code!"; break;
                     case "user": outputString = "Ping the user you would like the embed to have as its author, or say \"none\" to remove the author!"; break;
                     case "footer text": outputString = "Send the text you would like the footer to have, or say \"none\" to remove the footer!"; break;
@@ -420,7 +426,7 @@ module.exports = {
                 
                 // Get input
                 return await this.getInput({
-                    waitTime: 60*5,
+                    waitTime: waitTime_,
                     interaction,
                     replyEmbed,
                     replyMessage,
