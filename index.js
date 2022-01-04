@@ -79,9 +79,23 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 client.on("messageCreate", async (message) => {
-	// if (message.content === "test join img") {
-	// 	return await sendWelcomeImage(message, true);
-	// }
+	let data = JSON.parse(fs.readFileSync("./data/data.json"));
+
+	for (let i = 0; i < data.tickets.length; i++) {
+		if (message.channel.id === data.tickets[i].channel) {
+			data.tickets[i].log.push(`${message.author.username}: ${message.content}`);
+			if (message.content === "finish ticket") {
+				data.tickets[i].active = false;
+
+				message.guild.channels.fetch(data.tickets[i].channel).then(async (channel) => {
+					await channel.delete(`Ticket completed by ${message.author.username}`);
+					data.tickets[i].channel = null;
+				});
+			}
+		}
+	}
+
+	fs.writeFileSync("./data/data.json", JSON.stringify(data, null, 4));
 });
 
 // When someone joins the server
