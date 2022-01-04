@@ -54,9 +54,7 @@ module.exports = {
         // Wait for 1 message with a specific timeout
         await interaction.channel.awaitMessages({
             filter,
-            max: 1,
-            time: waitTime * 1000,
-            errors: ["time"]
+            max: 1
         }).then(async (messages) => {
             // Get the collected message
             let message = messages.first();
