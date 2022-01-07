@@ -15,16 +15,16 @@ module.exports = {
             .setRequired(true)),
 
     async execute(interaction) {
-        interaction.reply({
-            embeds: [
-                helpers.createEmbed({
-                    title: "Here you go!",
-                    description: "",
-                    author: interaction.user
-                })
-            ]
-        });
+        // interaction.reply({
+        //     embeds: [
+        //         helpers.createEmbed({
+        //             title: "Here you go!",
+        //             description: "",
+        //             author: interaction.user
+        //         })
+        //     ]
+        // });
 
-        console.log(`${interaction.user.username} started a vote!`);
+        // console.log(`${interaction.user.username} started a vote!`);
     }
 }
