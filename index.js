@@ -81,6 +81,10 @@ client.on("interactionCreate", async (interaction) => {
 client.on("messageCreate", async (message) => {
 	let data = JSON.parse(fs.readFileSync("./data/data.json"));
 
+	if (data.tickets === undefined) {
+		data.tickets = [];
+	}
+
 	for (let i = 0; i < data.tickets.length; i++) {
 		if (message.channel.id === data.tickets[i].channel) {
 			data.tickets[i].log.push(`${message.author.username}: ${message.content}`);
