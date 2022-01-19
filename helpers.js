@@ -1,4 +1,5 @@
-const { MessageEmbed } = require("discord.js")
+const { MessageEmbed } = require("discord.js");
+const fs = require("fs");
 
 module.exports = {
     defaultColors: [
@@ -8,6 +9,21 @@ module.exports = {
         "87E69E", // Green
         "7EE6D3" // Blue
     ],
+
+    // Reading data
+    read(filePath) {
+        let dataString = fs.readFileSync(filePath);
+        let data = JSON.parse(dataString);
+
+        return data;
+    },
+
+    // Writing data
+    write(filePath, data) {
+        let dataString = JSON.stringify(data, null, 4);
+
+        return fs.writeFileSync(filePath, dataString);
+    },
 
     // Creating embeds
     createEmbed({
