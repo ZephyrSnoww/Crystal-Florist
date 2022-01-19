@@ -12,15 +12,11 @@ module.exports = {
             .setRequired(true)),
 
     async execute(interaction) {
-        const data = JSON.parse(fs.readFileSync("./data/data.json"));
+        const tickets = JSON.parse(fs.readFileSync("./data/tickets.json"));
 
         const topic = interaction.options.getString("topic");
 
-        if (data.tickets == undefined) {
-            data.tickets = [];
-        }
-
-        for (let ticket of data.tickets) {
+        for (let ticket of tickets) {
             if (ticket.author === interaction.user.id && ticket.active) {
                 return interaction.reply({
                     embeds: [
@@ -103,20 +99,21 @@ module.exports = {
                             embeds: [
                                 helpers.createEmbed({
                                     title: `Ticket created by ${interaction.user.username}`,
-                                    description: `**Topic:** ${topic}`
+                                    description: `**Topic:** ${topic}\n\nSay "finish ticket" to close the ticket!`
                                 })
                             ]
                         });
             
-                        data.tickets.push({
+                        tickets.push({
                             active: true,
                             date: new Date().toLocaleString(),
                             author: interaction.user.id,
                             channel: channel.id,
+                            topic: topic,
                             log: []
                         });
             
-                        fs.writeFileSync("./data/data.json", JSON.stringify(data, null, 4));
+                        fs.writeFileSync("./data/tickets.json", JSON.stringify(tickets, null, 4));
                     });
                 });
             });

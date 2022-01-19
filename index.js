@@ -79,27 +79,23 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 client.on("messageCreate", async (message) => {
-	let data = JSON.parse(fs.readFileSync("./data/data.json"));
+	let tickets = JSON.parse(fs.readFileSync("./data/tickets.json"));
 
-	if (data.tickets === undefined) {
-		data.tickets = [];
-	}
-
-	for (let i = 0; i < data.tickets.length; i++) {
-		if (message.channel.id === data.tickets[i].channel) {
-			data.tickets[i].log.push(`${message.author.username}: ${message.content}`);
+	for (let i = 0; i < tickets.length; i++) {
+		if (message.channel.id === tickets[i].channel) {
+			tickets[i].log.push(`${message.author.username}: ${message.content}`);
 			if (message.content === "finish ticket") {
-				data.tickets[i].active = false;
+				tickets[i].active = false;
 
-				message.guild.channels.fetch(data.tickets[i].channel).then(async (channel) => {
+				message.guild.channels.fetch(tickets[i].channel).then(async (channel) => {
 					await channel.delete(`Ticket completed by ${message.author.username}`);
-					data.tickets[i].channel = null;
+					tickets[i].channel = null;
 				});
 			}
 		}
 	}
 
-	fs.writeFileSync("./data/data.json", JSON.stringify(data, null, 4));
+	fs.writeFileSync("./data/tickets.json", JSON.stringify(tickets, null, 4));
 });
 
 // When someone joins the server
