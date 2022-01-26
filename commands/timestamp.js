@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
+const timestring = require("timestring");
 const helpers = require("../helpers");
 const { execute } = require("./choose");
 
@@ -9,7 +10,7 @@ module.exports = {
     .addStringOption((option) =>
       option
         .setName("time")
-        .setDescription("The time, absolute or relative")
+        .setDescription("A relative time (ie: 3h22m).  Defaults to 0s")
         .setRequired(false)
     )
     .addStringOption((option) =>
@@ -20,17 +21,29 @@ module.exports = {
     ),
 
   async execute(interaction) {
-    const time = interaction.options.getString("time");
+    const time =
+      Math.floor(Date.now() / 1000) +
+      timestring(interaction.options.getString("time") ?? "0s");
     const format = interaction.options.getString("format");
 
-    // TODO: figure out how to actually do anything with this
+    // TODO: fix this
+    if (interaction.options.getString("format") !== null) {
+      return interaction.reply({
+        embeds: [
+          helpers.createEmbed({
+            title: "Whoops!",
+            description: "The `format` argument is not yet implemented.",
+            author: interaction.user,
+          }),
+        ],
+      });
+    }
+
     interaction.reply({
       embeds: [
         helpers.createEmbed({
-          title: "Whoops!",
-          description:
-            "That command isn't implemented yet!\n" +
-            `\`\`\`js\nargs: { time: ${time}, format: ${format} }\n\`\`\``,
+          title: "Here you go!",
+          description: `\`<t:${time}>\` -> <t:${time}>`,
           author: interaction.user,
         }),
       ],
