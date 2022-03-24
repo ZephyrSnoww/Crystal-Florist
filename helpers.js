@@ -1,84 +1,83 @@
-const { MessageEmbed } = require("discord.js");
-const fs = require("fs");
+const { MessageEmbed } = require('discord.js');
+const fs = require('fs');
 
 module.exports = {
-    defaultColors: [
-        "FF9EAA", // Pink
-        "FF5E6C", // Red
-        "A667E0", // Purple
-        "87E69E", // Green
-        "7EE6D3" // Blue
-    ],
+  defaultColors: [
+    'FF9EAA', // Pink
+    'FF5E6C', // Red
+    'A667E0', // Purple
+    '87E69E', // Green
+    '7EE6D3' // Blue
+  ],
 
-    // Reading data
-    read(filePath) {
-        let dataString = fs.readFileSync(filePath);
-        let data = JSON.parse(dataString);
+  // Reading data
+  read (filePath) {
+    const dataString = fs.readFileSync(filePath);
+    const data = JSON.parse(dataString);
 
-        return data;
-    },
+    return data;
+  },
 
-    // Writing data
-    write(filePath, data) {
-        let dataString = JSON.stringify(data, null, 4);
+  // Writing data
+  write (filePath, data) {
+    const dataString = JSON.stringify(data, null, 4);
 
-        return fs.writeFileSync(filePath, dataString);
-    },
+    return fs.writeFileSync(filePath, dataString);
+  },
 
-    // Creating embeds
-    createEmbed({
-        title,
-        description,
-        color = null,
-        url = null,
-        author = null,
-        thumbnail = null,
-        fields = [],
-        image = null,
-        footer = null,
-        timestamp = true
-    }) {
-        // If no color is given
-        // Choose randomly from the default colors list
-        if (!color) {
-            color = this.defaultColors[Math.floor(Math.random() * this.defaultColors.length)];
-        }
-
-        // Make the embed
-        const embed = new MessageEmbed()
-            .setTitle(title)
-            .setDescription(description)
-            .setColor(color)
-            .setURL(url)
-            .setThumbnail(thumbnail)
-            .setImage(image);
-
-        if (timestamp) {
-            embed.setTimestamp();
-        }
-        
-        // Set author if one is given
-        if (author) {
-            if (typeof(author) === "object") {
-                embed.setAuthor(author.username, author.avatarURL());
-            }
-            else {
-                embed.setAuthor(author[0], author[1]);
-            }
-        }
-
-        // Set fields if any are given
-        if (fields.length !== 0) {
-            for (let i = 0; i < fields.length; i++) {
-                embed.addField(fields[i].name, fields[i].value, fields[i].inline === undefined ? false : fields[i].inline);
-            }
-        }
-
-        // Set footer if one is given
-        if (footer) {
-            embed.setFooter(footer.text, footer.image);
-        }
-
-        return embed;
+  // Creating embeds
+  createEmbed ({
+    title,
+    description,
+    color = null,
+    url = null,
+    author = null,
+    thumbnail = null,
+    fields = [],
+    image = null,
+    footer = null,
+    timestamp = true
+  }) {
+    // If no color is given
+    // Choose randomly from the default colors list
+    if (!color) {
+      color = this.defaultColors[Math.floor(Math.random() * this.defaultColors.length)];
     }
-}
+
+    // Make the embed
+    const embed = new MessageEmbed()
+      .setTitle(title)
+      .setDescription(description)
+      .setColor(color)
+      .setURL(url)
+      .setThumbnail(thumbnail)
+      .setImage(image);
+
+    if (timestamp) {
+      embed.setTimestamp();
+    }
+
+    // Set author if one is given
+    if (author) {
+      if (typeof (author) === 'object') {
+        embed.setAuthor(author.username, author.avatarURL());
+      } else {
+        embed.setAuthor(author[0], author[1]);
+      }
+    }
+
+    // Set fields if any are given
+    if (fields.length !== 0) {
+      for (let i = 0; i < fields.length; i++) {
+        embed.addField(fields[i].name, fields[i].value, fields[i].inline === undefined ? false : fields[i].inline);
+      }
+    }
+
+    // Set footer if one is given
+    if (footer) {
+      embed.setFooter(footer.text, footer.image);
+    }
+
+    return embed;
+  }
+};
